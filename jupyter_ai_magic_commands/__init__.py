@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from IPython.core.interactiveshell import InteractiveShell
 
 
-__version__ = '0.0.0'
+__version__ = '0.0.1'
 
 def load_ipython_extension(ipython: InteractiveShell):
     from .exception import store_exception

@@ -2,6 +2,25 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 0.0.3
+
+([Full Changelog](https://github.com/jupyter-ai-contrib/jupyter-ai-magic-commands/compare/v0.0.2...92c7982e241dd560945736791871552fee57ecbb))
+
+### Enhancements made
+
+- Add version floor on jupyter_ai_litellm [#5](https://github.com/jupyter-ai-contrib/jupyter-ai-magic-commands/pull/5) ([@dlqqq](https://github.com/dlqqq))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/jupyter-ai-contrib/jupyter-ai-magic-commands/graphs/contributors?from=2025-10-30&to=2026-03-24&type=c))
+
+@dlqqq ([activity](https://github.com/search?q=repo%3Ajupyter-ai-contrib%2Fjupyter-ai-magic-commands+involves%3Adlqqq+updated%3A2025-10-30..2026-03-24&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 0.0.2
 
 ([Full Changelog](https://github.com/jupyter-ai-contrib/jupyter-ai-magic-commands/compare/v0.0.1...b8c00ed75fbaa5fc70568bd9bdab0a9476646c20))
@@ -19,8 +38,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyter-ai-contrib/jupyter-ai-magic-commands/graphs/contributors?from=2025-10-30&to=2025-10-30&type=c))
 
 [@dlqqq](https://github.com/search?q=repo%3Ajupyter-ai-contrib%2Fjupyter-ai-magic-commands+involves%3Adlqqq+updated%3A2025-10-30..2025-10-30&type=Issues) | [@srdas](https://github.com/search?q=repo%3Ajupyter-ai-contrib%2Fjupyter-ai-magic-commands+involves%3Asrdas+updated%3A2025-10-30..2025-10-30&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 0.0.1
 

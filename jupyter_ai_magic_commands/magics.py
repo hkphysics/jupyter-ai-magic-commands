@@ -317,6 +317,17 @@ class AiMagics(Magics):
         model_id = args.model_id
         # Check if model_id is an alias and get stored configuration
         alias_config = None
+
+        if "@" in args.model_id:
+            # Persona tag detected, delegate to persona handler
+            from .persona_handler import handle_persona
+            persona_result = handle_persona(args.model_id, prompt)
+             # Use the result as the output and skip litellm call
+            output = persona_result
+            metadata = {"jupyter_ai_v3": {"model_id": args.model_id}}
+            # Return output given the format
+            return self.display_output(output, args.format, metadata)
+
         if model_id not in CHAT_MODELS and model_id in self.aliases:
             alias_config = self.aliases[model_id]
             model_id = alias_config["target"]
@@ -347,9 +358,7 @@ class AiMagics(Magics):
                     return
                 completion_args["api_key_name"] = api_key_name_value
 
-            # Call litellm completion
             response = litellm.completion(**completion_args)
-
             # Extract output text from response
             output = response.choices[0].message.content
 

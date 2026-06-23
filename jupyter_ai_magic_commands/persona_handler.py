@@ -2,11 +2,13 @@
 persona_handler call REST API in persona manager to get chat
 result
 """
+import json
 import requests
 from jupyter_server.serverapp import list_running_servers
+from .parsers import CellArgs
 
 
-def handle_persona(persona_id: str, prompt: str) -> str:
+def handle_persona(args: CellArgs, prompt: str) -> str:
     """
     Handle persona requests by calling a REST API via Jupyter Server.
 
@@ -17,7 +19,8 @@ def handle_persona(persona_id: str, prompt: str) -> str:
     Returns:
         The response from the persona API
     """
-    persona_name = persona_id.split("@")[-1]
+    persona_name = args.model_id.split("@")[-1]
+    metadata = json.loads(args.model_parameters)
     last_error = None
     for server in list_running_servers():
         if 'base_url' not in server:
@@ -33,7 +36,8 @@ def handle_persona(persona_id: str, prompt: str) -> str:
             if xsrf_token := server.get("cookie", {}).get("_xsrf"):
                 headers["X-XSRF-Token"] = xsrf_token
             response = session.post(
-                api_url, json={"message": prompt}, headers=headers
+                api_url, json={"message": prompt,
+                               "metadata": metadata}, headers=headers
             )
             response.raise_for_status()
             return response.json().get("response", response.text)

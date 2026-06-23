@@ -322,7 +322,7 @@ class AiMagics(Magics):
         if "@" in args.model_id:
             # Persona tag detected, delegate to persona handler
             from .persona_handler import handle_persona
-            persona_result = handle_persona(args.model_id, prompt)
+            persona_result = handle_persona(args, prompt)
              # Use the result as the output and skip litellm call
             output = persona_result
             metadata = {"jupyter_ai_v3": {"model_id": args.model_id}}

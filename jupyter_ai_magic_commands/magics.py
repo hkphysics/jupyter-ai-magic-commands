@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import warnings
+import shlex
 from typing import Any, Optional
 
 import click
@@ -220,7 +221,7 @@ class AiMagics(Magics):
         if os.path.isfile(dotenv_path):
             load_dotenv(dotenv_path, override=True)
 
-        raw_args = line.split(" ")
+        raw_args = shlex.split(line)
         default_map = {"model_id": self.initial_language_model}
 
         # parse arguments
@@ -247,7 +248,7 @@ class AiMagics(Magics):
                 return
             if not args:
                 print(
-                    "No valid %ai magics arguments given, run `%ai help` for all options.",
+                    f"Error {str(e)} No valid %ai magics arguments given, run `%ai help` for all options.",
                     file=sys.stderr,
                 )
                 return

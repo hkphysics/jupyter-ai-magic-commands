@@ -1,9 +1,11 @@
 import base64
+import io
 import json
 import os
 import re
 import sys
 import warnings
+import shlex
 from typing import Any, Optional
 
 import click
@@ -220,7 +222,7 @@ class AiMagics(Magics):
         if os.path.isfile(dotenv_path):
             load_dotenv(dotenv_path, override=True)
 
-        raw_args = line.split(" ")
+        raw_args = shlex.split(line)
         default_map = {"model_id": self.initial_language_model}
 
         # parse arguments
@@ -247,7 +249,7 @@ class AiMagics(Magics):
                 return
             if not args:
                 print(
-                    "No valid %ai magics arguments given, run `%ai help` for all options.",
+                    f"Error {str(e)} No valid %ai magics arguments given, run `%ai help` for all options.",
                     file=sys.stderr,
                 )
                 return
@@ -310,6 +312,38 @@ class AiMagics(Magics):
         if self.transcript:
             messages.extend(self.transcript[-2 * self.max_history :])
 
+        # If --eval flag is set, execute the cell code and use the result as prompt
+        if args.eval:
+            try:
+                # Create an execution result holder
+                result = None
+                output_buffer = io.StringIO()
+
+                # Redirect stdout to capture print output
+                old_stdout = sys.stdout
+                sys.stdout = output_buffer
+
+                try:
+                    # Execute the cell code
+                    result = ip.run_cell(prompt)
+
+                    # Get stdout output
+                    stdout_output = output_buffer.getvalue()
+                finally:
+                    # Restore stdout
+                    sys.stdout = old_stdout
+
+                # Use stdout if there was any, otherwise use the result
+                if stdout_output.strip():
+                    prompt = stdout_output.strip()
+                elif result.result is not None:
+                    prompt = str(result.result)
+                # If both are empty/None, we keep the original prompt (fallback behavior)
+            except Exception as e:
+                error_msg = f"Error executing cell code with --eval flag: {str(e)}"
+                print(error_msg, file=sys.stderr)
+                # Continue with the original prompt if execution fails, as fallback
+
         # Add current prompt
         messages.append({"role": "user", "content": prompt})
 
@@ -317,6 +351,17 @@ class AiMagics(Magics):
         model_id = args.model_id
         # Check if model_id is an alias and get stored configuration
         alias_config = None
+
+        if "@" in args.model_id:
+            # Persona tag detected, delegate to persona handler
+            from .persona_handler import handle_persona
+            persona_result = handle_persona(args, prompt)
+            # Use the result as the output and skip litellm call
+            output = persona_result
+            metadata = {"jupyter_ai_v3": {"model_id": args.model_id}}
+            # Return output given the format
+            return self.display_output(output, args.format, metadata)
+
         if model_id not in CHAT_MODELS and model_id in self.aliases:
             alias_config = self.aliases[model_id]
             model_id = alias_config["target"]
@@ -347,9 +392,7 @@ class AiMagics(Magics):
                     return
                 completion_args["api_key_name"] = api_key_name_value
 
-            # Call litellm completion
             response = litellm.completion(**completion_args)
-
             # Extract output text from response
             output = response.choices[0].message.content
 

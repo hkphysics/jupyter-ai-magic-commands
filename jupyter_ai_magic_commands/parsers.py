@@ -47,6 +47,7 @@ class CellArgs(BaseModel):
     model_id: str
     format: FORMAT_CHOICES_TYPE
     model_parameters: Optional[str] = None
+    eval: bool = False
     # The following parameters are required only for SageMaker models
     region_name: Optional[str] = None
     request_schema: Optional[str] = None
@@ -179,6 +180,12 @@ def verify_json_value(ctx, param, value):
     help=MODEL_PARAMETERS_HELP,
     callback=verify_json_value,
     default="{}",
+)
+@click.option(
+    "--eval",
+    is_flag=True,
+    default=False,
+    help="Execute the cell code and pass the result to the AI model.",
 )
 @click.pass_context
 def cell_magic_parser(context: click.Context, **kwargs):
